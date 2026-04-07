@@ -1,4 +1,6 @@
 use std::io::{self, Write};
+use std::fs;
+use rand::seq::IndexedRandom;
 
 fn main() {
     loop {
@@ -40,6 +42,22 @@ fn get_user_choice() -> u32 {
     input.trim().parse().unwrap_or(0)
 }
 
+fn load_words() -> Vec<String> {
+    match fs::read_to_string("words.txt") {
+        Ok(content) => {
+            content
+                .lines()
+                .map(String::from)
+                .filter(|s| !s.is_empty())
+                .collect()
+        }
+        Err(e) => {
+            eprintln!("Не удалось открыть файл {}", e);
+            vec!["rust".to_string(), "код".to_string(), "тест".to_string()]
+        }
+    }
+}
+
 fn print_rules() {
     println!("\n📜 ПРАВИЛА ИГРЫ «ВИСЕЛИЦА»");
     println!("────────────────────────────────────");
@@ -54,8 +72,15 @@ fn print_rules() {
 }
 
 fn play_game() {
-    println!("\n=== Начало игры ===");
+    println!("\n=== Играем ===");
     println!("\n...\n");
+    let words = load_words();
+    
+    let secret_word = words.choose(&mut rand::rng()).unwrap();
+
+    println!("Все слова в файле: {:?}", words);
+    println!("\nЯ загадал слово: {}", secret_word);
+
     wait_for_enter();
 }
 
