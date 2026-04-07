@@ -59,6 +59,80 @@ fn load_words() -> Vec<String> {
     }
 }
 
+fn draw_hangman(mistakes: u32) {
+    println!("\n╔════════════════════╗");
+    println!("║     В И С Е Л И Ц А  ║");
+    println!("╠════════════════════╣");
+    
+    match mistakes {
+        0 => {
+            println!("║                    ║");
+            println!("║                    ║");
+            println!("║                    ║");
+            println!("║                    ║");
+            println!("║                    ║");
+            println!("║                    ║");
+            println!("║   ═════════════    ║");
+        }
+        1 => {
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║   ═════════════    ║");
+        }
+        2 => {
+            println!("║    ┌───│           ║");
+            println!("║    │   │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║   ═════════════    ║");
+        }
+        3 => {
+            println!("║    ┌───│           ║");
+            println!("║    │   │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║   ═════════════    ║");
+        }
+        4 => {
+            println!("║    ┌───│           ║");
+            println!("║    │   │           ║");
+            println!("║    ●   │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║        │           ║");
+            println!("║   ═════════════    ║");
+        }
+        5 => {
+            println!("║    ┌───│           ║");
+            println!("║    │   │           ║");
+            println!("║    ●   │           ║");
+            println!("║    │   │           ║");
+            println!("║    │   │           ║");
+            println!("║        │           ║");
+            println!("║   ═════════════    ║");
+        }
+        6 => {
+            println!("║    ┌───│           ║");
+            println!("║    │   │           ║");
+            println!("║    ●   │           ║");
+            println!("║   /│\\  │           ║");
+            println!("║   / \\  │           ║");
+            println!("║        │           ║");
+            println!("║   ═════════════    ║");
+        }
+        _ => {}
+    }
+    println!("╚════════════════════╝\n");
+}
+
 fn print_rules() {
     println!("\n📜 ПРАВИЛА ИГРЫ «ВИСЕЛИЦА»");
     println!("────────────────────────────────────");
@@ -87,7 +161,8 @@ fn play_game() {
     let max_mistakes = 6;
 
     loop {
-        
+        draw_hangman(mistakes);
+
         let current_display: String = target_word.iter().map(|c| {
             if guessed_letters.contains(c) { *c } else { '_' }
         }).collect::<Vec<char>>().into_iter().collect::<String>();
