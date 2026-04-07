@@ -1,6 +1,7 @@
 use std::io::{self, Write};
 use std::fs;
 use rand::seq::IndexedRandom;
+use std::collections::HashSet;
 
 fn main() {
     loop {
@@ -73,13 +74,69 @@ fn print_rules() {
 
 fn play_game() {
     println!("\n=== Играем ===");
-    println!("\n...\n");
     let words = load_words();
     
     let secret_word = words.choose(&mut rand::rng()).unwrap();
 
-    println!("Все слова в файле: {:?}", words);
-    println!("\nЯ загадал слово: {}", secret_word);
+    let secret_lower = secret_word.to_lowercase();
+
+    let target_word: Vec<char> = secret_lower.chars().collect();
+
+    let mut guessed_letters: HashSet<char> = HashSet::new(); // Набор угаданных букв
+    let mut mistakes = 0;
+    let max_mistakes = 6;
+
+    loop {
+        
+        let current_display: String = target_word.iter().map(|c| {
+            if guessed_letters.contains(c) { *c } else { '_' }
+        }).collect::<Vec<char>>().into_iter().collect::<String>();
+
+        println!("\nСлово: {}", current_display.split("").filter(|s| !s.is_empty()).collect::<Vec<&str>>().join(" "));
+        
+        println!("Ошибки: {}/{}", mistakes, max_mistakes);
+        
+        if !current_display.contains('_') {
+            println!("\nК СОЖАЛЕНИЮ ТЫ ВЫИГРАЛ!{}", secret_word);
+            break;
+        }
+
+        if mistakes >= max_mistakes {
+            println!("\nТЫ ПРОИГРАЛ! \nЗагаданное слово: {}", secret_word);
+            break;
+        }
+
+        let points = 100 + (rand::random::<u32>() % 901);
+        println!("{} очков на барабане", points);
+        println!("Буква: ");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("Ошибка ввода");
+        
+        let guess = match input.trim().to_lowercase().chars().next() {
+            Some(c) => c,
+            None => {
+                println!("Ты ничего не ввел. Давай снова.");
+                continue;
+            }
+        };
+
+        if guessed_letters.contains(&guess) {
+            println!("Ты уже называл эту букву букву!");
+            continue;
+        }
+
+        guessed_letters.insert(guess);
+
+        if secret_lower.contains(guess) {
+            println!("ОТКРОЙТЕ!");
+        } else {
+            mistakes += 1;
+            println!("Нет такой буквы!");
+            println!("ВРАЩАЙТЕ БАРАБАН!");
+        }
+    }
 
     wait_for_enter();
 }
